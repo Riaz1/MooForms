@@ -1,2 +1,2 @@
 # MooForms
-Sample apps on various mobile platforms for MooForms
+Sample apps on how to integrate MooForms on various mobile platforms. 
