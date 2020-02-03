@@ -42,30 +42,35 @@ export default class App extends Component {
     if (!this.state.hasAppID) {
       return null;
     }
-
-    let formURL = '';
-
+	 
     //TODO: get the below information from your MooForms account
-    let publicURL = '';
-    let privateURL = '';
-    let privateKey = '';
-    let usePrivateForm = false; //change to true if using a private form
+    let URLToUse = '';
+    let formURL = '';
+    let formKey = '';
+    let renderKey = '';
+    let useSaveableForm = false; //change to true if using a saveable form, default is submit only
+    let URLHasParam = false;
 
-    formURL = publicURL;
-    if (usePrivateForm) {
-      formURL = privateURL;
+    URLToUse = formURL;
+    if (formKey !== '') {
+      URLToUse = URLToUse + '?form_key=' + formKey;
+      URLHasParam = true;
+    } else if (renderKey !== '') {
+      URLToUse = URLToUse + '?render_key=' + renderKey;
+      URLHasParam = true;
     }
 
-    formURL = formURL + '?app_id=' + this.state.appID;
-    if (usePrivateForm) {
-      formURL = formURL + '&key=' + privateKey;
+    if (useSaveableForm) {
+      if (URLHasParam) {
+        URLToUse = URLToUse + '&';
+      } else {
+        URLToUse = URLToUse + '?';
+      }
+      URLToUse = URLToUse + 'app_id=' + this.state.appID;
     }
-
-    console.log('form:' + formURL);
-    console.log('appID: ' +  this.state.appID);
 
     let url = {
-      uri: formURL
+      uri: URLToUse
     };
     return (
       <WebView
