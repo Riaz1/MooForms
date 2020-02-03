@@ -30,11 +30,10 @@ public class MainActivity extends AppCompatActivity {
 
     //TODO: get the below information from your MooForms account (integration page)
     public static String domain = "";
-    public static String publicURL = "";
-    public static String privateURL = "";
-    public static String privateKey = "";
-
-    public static boolean usePrivateURL = false; //change to true if using a private form
+    public static String formURL = "";
+    public static String formKey = ""; //use the form key by default - getFormURL()
+    public static String renderKey = ""; //only use the render key if the form key is empty - getFormURL()
+    public static boolean useSaveableForm = false; //change to true if using a saveable form, the default is to use a submit only form
 
     protected WebView myWebView;
     public static String offlineURL = "file:///android_asset/offline.html";
@@ -77,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
 
-        //are we using the private or public url?
+        //are we using a saveable form or submit only form?
         String formURL = getFormURL();
 
         myWebView.loadUrl(offlineURL);
@@ -87,13 +86,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String getFormURL() {
-        String URLToUse;
-        if (usePrivateURL) { //are we using a private URL
-            URLToUse = privateURL;
-            URLToUse = addURLParam(URLToUse, "app_id", id(this)); //add the app id
-            URLToUse = addURLParam(URLToUse, "key", privateKey); //add the private key
-        } else { //public URL
-            URLToUse = publicURL;
+        String URLToUse = formURL;
+        if (!formKey.equals("")) {
+            URLToUse = addURLParam(URLToUse, "form_key", formKey); //add the form key
+        } else if (!renderKey.equals("")) {
+            URLToUse = addURLParam(URLToUse, "render_key", renderKey); //add the render key
+        }
+
+        if (useSaveableForm) {
             URLToUse = addURLParam(URLToUse, "app_id", id(this)); //add the app id
         }
 
