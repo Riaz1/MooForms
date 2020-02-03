@@ -36,11 +36,10 @@ class ViewController: UIViewController, WKNavigationDelegate {
     var webView: WKWebView!
 
     //TODO: get the below information from your MooForms account (integration page)
-    var domain = ""
-    var publicURL = ""
-    var privateURL = ""
-    var privateKey = ""
-    var usePrivateForm = false //change to true if using a private form
+    var formURL = ""
+    var formKey = ""
+    var renderKey = ""
+    var useSaveableForm = false //change to true if using a saveable form
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,19 +51,22 @@ class ViewController: UIViewController, WKNavigationDelegate {
             UserDefaults.standard.set(appID, forKey: "appID")
         }
         
-        //are we using the private or public url?
-        var formURL:URL
-        if (usePrivateForm) {
-            formURL = URL(string: privateURL)!
-            formURL = formURL.appending("app_id", value: appID)
-            formURL = formURL.appending("key", value: privateKey)
-        } else {
-            formURL = URL(string: publicURL)!
-            formURL = formURL.appending("app_id", value: appID)
+        var URLToUse:URL
+        URLToUse = URL(string: formURL)!
+        
+        //are we using a form key or render key?
+        if (!formKey.isEmpty) {
+            URLToUse = URLToUse.appending("form_key", value: formKey)
+        } else if (!renderKey.isEmpty) {
+            URLToUse = URLToUse.appending("render_key", value: renderKey)
+        }
+        
+        if (useSaveableForm) {
+            URLToUse = URLToUse.appending("app_id", value: appID)
         }
         
         webView.configuration.preferences.javaScriptEnabled = true
-        webView.load(URLRequest(url: formURL))
+        webView.load(URLRequest(url: URLToUse))
     }
 
     override func loadView() {
